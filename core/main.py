@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Query
 import random as ran
+from typing import Optional,Annotated
 
 app = FastAPI()
 
@@ -8,7 +9,9 @@ name_list = [
     {"id":2,"name":"maryam"},
     {"id":3,"name":"amir"},
     {"id":4,"name":"aziz"},
-    {"id":5,"name":"zahra"}
+    {"id":5,"name":"zahra"},
+    {"id":6,"name":"ali"},
+    {"id":7,"name":"ali"}
 ]
 
 @app.get("/")
@@ -19,9 +22,9 @@ def root():
 def root2():
     return {"massage":"hello amirali"}
 
-@app.get("/names")
-def ret_names_list():
-    return name_list
+# @app.get("/names")
+# def ret_names_list():
+#     return name_list
 
 
 @app.post("/names")
@@ -44,4 +47,26 @@ def update_name(name_id:int,name:str):
             item["name"] = name
             return item
     return {"پیام": f"نامی با شناسه {name_id} پیدا نشد"}
-        
+
+@app.delete("/names{name_id}")
+def delete_name(name_id:int):
+    for itme in name_list:
+        if itme["id"] == name_id:
+            # name_list.remove({"id":itme["id"],"name":itme["name"]})
+            name_list.remove(itme)
+            return {"messga:sussec"}
+    return {"پیام": f"نامی با شناسه {name_id} پیدا نشد"}
+
+
+@app.get("/names")
+# def cury_parametr(q:str | None = None): #24 t 26 comment
+# def cury_parametr(q:Optional[str]): #24 t 26 comment
+def cury_parametr(q: Annotated[str | None,Query(max_length=50)]=None):
+    if q:
+        serch_list = [item for item in name_list if item["name"]==q]
+        if serch_list != []:
+            return serch_list
+        else:
+            return {"پیام": f"نامی با شناسه {q} پیدا نشد"}
+    # else: # bejay none = none
+    #     return {"پیام": f"نامی با شناسه {q} پیدا نشد"}
