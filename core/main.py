@@ -3,8 +3,26 @@ from fastapi import UploadFile,File
 import random as ran
 from typing import Optional,Annotated,List
 from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+
+"""
+@app.on_event("startup") # khat khorde chon masokh shode
+def startup_event():
+    print("stsrting the app")
+
+@app.on_event("shutdown")
+def shutting_down_event():
+    print("shutting down the app ")
+"""
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    print("Application startup")
+    yield
+    print("Application shutdown")
+
+app = FastAPI(lifespan=lifespan)
 
 name_list = [
     {"id":1,"name":"ali"},
@@ -15,6 +33,7 @@ name_list = [
     {"id":6,"name":"ali"},
     {"id":7,"name":"ali"}
 ]
+
 
 
 @app.get("/")
@@ -129,3 +148,5 @@ async def upload_file(file: UploadFile = File(...)):
 @app.post("/multipel_file/")
 async def multipel_files(files : List[UploadFile]):
     return [{"filename":file.filename,"file_type":file.content_type} for file in files]
+
+
