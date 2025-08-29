@@ -58,7 +58,7 @@ def serch_name_id(name_id:int = Path(alias="serch",title="object id in name",des
 # @app.put("/names/{name_id}")
 @app.put("/names/{name_id}",status_code=status.HTTP_200_OK)
 # def update_name(name_id:int,name:str):
-def update_name(name_id:int = Path(),name:str = Form(alias="enter")):
+def update_name(name_id:int = Path(),name:str = Form()):
     for item in name_list:
         if item["id"] == name_id:
             item["name"] = name
